@@ -5,7 +5,6 @@ json_data = json.load(json_file)
 json_file.close()
 
 first_write = True
-tmp_dict = {}
 new_json_file = open('eng-metadata.json','w')
 new_json_file.write('[\n')
 for data in json_data:
@@ -16,7 +15,10 @@ for data in json_data:
             else:
                 new_json_file.write(',\n')
             tmp_dict = {}
+            tmp_list = []
             tmp_dict['LoC_Class'] = data['LoC Class']
+            for locClass in data['LoC Class']:
+                pass
             tmp_dict['txt_path'] = data['gd-path']
             new_json_file.write(json.dumps(tmp_dict))
         else:
