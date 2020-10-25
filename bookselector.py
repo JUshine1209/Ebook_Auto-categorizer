@@ -12,3 +12,4 @@ for data in json_data:
 random_booknum_list = random.sample(booknum_list,1000)
 random_booknum_list.sort()
 print(random_booknum_list)
+print(len(random_booknum_list))

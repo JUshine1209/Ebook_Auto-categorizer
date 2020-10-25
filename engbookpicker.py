@@ -16,9 +16,18 @@ for data in json_data:
                 new_json_file.write(',\n')
             tmp_dict = {}
             tmp_list = []
-            tmp_dict['LoC_Class'] = data['LoC Class']
             for locClass in data['LoC Class']:
-                pass
+                tmp_class = ""
+                if len(locClass) > 1:
+                    if locClass[1] not in 'ABCDEFGHIJKLMNOPQRSTUVWXYZ':
+                        tmp_class = locClass[0]
+                    else:
+                        tmp_class = locClass[:2]
+                else:
+                    tmp_class = locClass
+                if tmp_class not in tmp_list:
+                    tmp_list.append(tmp_class)
+            tmp_dict['LoC_Class'] = tmp_list
             tmp_dict['txt_path'] = data['gd-path']
             new_json_file.write(json.dumps(tmp_dict))
         else:
