@@ -15,6 +15,7 @@ random_booknum_list.sort()
 
 first_write = True
 random_book_json = open('random_book.json','w')
+random_book_json.write('[\n')
 for book in random_booknum_list:
     shutil.copy('gutenberg-dammit-files/'+book,'randombooks')
     if first_write:
@@ -25,4 +26,5 @@ for book in random_booknum_list:
     tmp_dict['LoC_Class'] = booknum_dict[book]
     tmp_dict['txt_path'] = book
     random_book_json.write(json.dumps(tmp_dict))
-
+random_book_json.write('\n]')
+random_book_json.close()
