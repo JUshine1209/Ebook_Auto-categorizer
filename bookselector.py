@@ -12,7 +12,6 @@ for data in json_data:
 
 random_booknum_list = random.sample(booknum_dict.keys(),1000)
 random_booknum_list.sort()
-print(random_booknum_list)
 
 first_write = True
 random_book_json = open('random_book.json','w')
