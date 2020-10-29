@@ -1,19 +1,12 @@
 import joblib
+import json
 from tkinter import *
 from tkinter import filedialog
 
-'''
-opened_txt_data = txt_file.read()
-txt_file.close()
-print(chr(txt_clf.predict([opened_txt_data])[0]+64))
-'''
-
 class clfGUI:
-    def __init__(self, clf):
-        self.loc_class_dict = {}
-        self.loc_class_dict['A'] = 'General Works'
-
+    def __init__(self, clf, Loc_Class):
         self.txt_clf = clf
+        self.clsdict = Loc_Class
         self.root = Tk()
         self.root.title('E-book Auto-Categorizer')
         self.root.geometry('640x480')
@@ -41,26 +34,64 @@ class clfGUI:
         for file in filename:
             self.txtlistbox.insert(self.txtindex,file)
             self.txtindex += 1
+
     def Save(self):
-        pass
+        if self.txtindex != self.clfindex or self.clfindex == 0:
+            pass
+        else:
+            first_write = True
+            filename = filedialog.asksaveasfilename(title='Save as',filetypes=(('json files','*.json'),))
+            Categorized_json = open(filename+'.json','w')
+            Categorized_json.write('[\n')
+            for i in range(0,self.resultlistbox.size()):
+                if first_write:
+                    first_write = False
+                else:
+                    Categorized_json.write(',\n')
+                books_dict = {self.txtlistbox.get(i,i)[0].split('/')[-1][:-4]\
+                    :self.resultlistbox.get(i,i)[0]}
+                Categorized_json.write(json.dumps(books_dict))
+            Categorized_json.write('\n]')
+            Categorized_json.close()
+               
     def Categorize(self):
         if self.txtlistbox.size() == 0:
             pass
         else:
+            self.clfindex = 0
+            if self.resultlistbox.size() != 0:
+                self.resultlistbox.delete(0,self.resultlistbox.size()-1)
             classified_category_list = []
             for textfile in self.txtlistbox.get(0,self.txtlistbox.size()-1):
                 txt_file = open(textfile,'r',encoding='UTF8')
                 opened_txt_data = txt_file.read()
                 txt_file.close()
                 classified_category_list.append(chr(self.txt_clf.predict([opened_txt_data])[0]+64))
-            
+            for cl in classified_category_list:
+                self.resultlistbox.insert(self.clfindex,self.clsdict[cl])
+                self.clfindex += 1
+
     def Reset(self):
-        pass
+        self.txtindex = 0
+        self.clfindex = 0
+        if self.txtlistbox.size() != 0:
+            self.txtlistbox.delete(0,self.txtlistbox.size()-1)
+        if self.resultlistbox.size() != 0:
+            self.resultlistbox.delete(0,self.resultlistbox.size()-1)
 
 if __name__ == "__main__":
     print('Loading Classifier Model...')
     txt_clf = joblib.load('Tfidf_SVM_model.pkl')
     print('Loading Done!')
-    EAC = clfGUI(txt_clf)
+
+    LoC_Class_dict = {'A':'General Works','B':'Philosophy, Psychology, Religion',\
+        'C':'Auxiliary Sciences of History','D':'World History','E':'History of Americas',\
+            'F':'History of the Americas','G':'Geography, Anthropology, Recreation','H':'Social Sciences',\
+                'J':'Political Sciences','K':'Law','L':'Education','M':'Music and Books on Music',\
+                    'N':'Fine Arts','P':'Language and Literature','Q':'Sciences','R':'Medicine',\
+                        'S':'Agriculture','T':'Technology','U':'Military Science','V':'Naval Science',\
+                            'Z':'Bibliography, Library Science, Information Resources (General)'}
+
+    EAC = clfGUI(txt_clf, LoC_Class_dict)
 
 
