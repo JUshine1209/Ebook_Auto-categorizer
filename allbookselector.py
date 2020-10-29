@@ -1,5 +1,4 @@
 import json
-import random
 import shutil
 
 json_file = open('eng-metadata.json','r')
